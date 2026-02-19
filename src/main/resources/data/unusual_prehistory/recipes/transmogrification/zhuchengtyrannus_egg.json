@@ -1,0 +1,10 @@
+{
+  "type": "unusual_prehistory:transmogrification",
+  "input": {
+    "item": "unusualoddities:tyrannised_fossil"
+  },
+  "output": {
+    "item": "unusualoddities:zhuchengtyrannus_egg"
+  },
+  "processing_time": 1600
+}
