@@ -16,7 +16,7 @@ public class UNODEntities {
 
     public static final RegistryObject<EntityType<ZhuchengtyrannusEntity>> ZHUCHENGTYRANNUS =
             ENTITIES.register("zhuchengtyrannus", () -> EntityType.Builder.of(ZhuchengtyrannusEntity::new, MobCategory.CREATURE)
-                    .sized(2.5f, 3.5f)
+                    .sized(2.0f, 4.5f)
                     .build("zhuchengtyrannus"));
 
     public static final RegistryObject<EntityType<ZhuchengtyrannusEggEntity>> ZHUCHENG_EGG_PROJECTILE =

@@ -79,7 +79,6 @@ public class ZhuchengtyrannusModel<T extends ZhuchengtyrannusEntity> extends Hie
 				.texOffs(42, 71).addBox(-12.0F, -24.0F, -13.0F, 4.0F, 5.0F, 6.0F, new CubeDeformation(0.0F))
 				.texOffs(62, 71).addBox(8.0F, -24.0F, -13.0F, 4.0F, 5.0F, 6.0F, new CubeDeformation(0.0F))
 				.texOffs(0, 59).addBox(-3.0F, 0.0F, -30.0F, 6.0F, 3.0F, 15.0F, new CubeDeformation(0.0F))
-				.texOffs(46, 30).addBox(-6.0F, 0.0F, -15.0F, 12.0F, 3.0F, 15.0F, new CubeDeformation(0.0F))
 				.texOffs(68, 104).addBox(-7.0F, -16.0F, -8.0F, 14.0F, 16.0F, 8.0F, new CubeDeformation(0.0F))
 				.texOffs(41, 78).addBox(5.0F, -8.0F, -16.0F, 0.0F, 13.0F, 15.0F, new CubeDeformation(0.0F))
 				.texOffs(41, 78).addBox(-5.0F, -8.0F, -16.0F, 0.0F, 13.0F, 15.0F, new CubeDeformation(0.0F)), PartPose.offset(0.5F, 1.0F, 0.0F));
@@ -98,9 +97,11 @@ public class ZhuchengtyrannusModel<T extends ZhuchengtyrannusEntity> extends Hie
 		PartDefinition tail_3 = tail_2.addOrReplaceChild("tail_3", CubeListBuilder.create().texOffs(309, 62).addBox(-4.0F, -3.0F, 0.0F, 8.0F, 8.0F, 23.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -3.0F, 36.0F));
 
 		PartDefinition arm_1 = everything_except_legs.addOrReplaceChild("arm_1", CubeListBuilder.create().texOffs(88, 243).addBox(-2.0F, 0.0F, -4.0F, 4.0F, 20.0F, 8.0F, new CubeDeformation(0.0F))
-				.texOffs(4, 228).addBox(2.0F, 20.0F, -4.0F, 0.0F, 7.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(18.0F, 17.0F, -35.0F));
+				.texOffs(9, 233).addBox(0.0F, 20.0F, 1.0F, 2.0F, 5.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(9, 233).addBox(0.0F, 20.0F, -4.0F, 2.0F, 5.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(18.0F, 17.0F, -35.0F));
 
-		PartDefinition arm_2 = everything_except_legs.addOrReplaceChild("arm_2", CubeListBuilder.create().texOffs(4, 228).addBox(-2.0F, 20.0F, -4.0F, 0.0F, 7.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(-18.0F, 17.0F, -35.0F));
+		PartDefinition arm_2 = everything_except_legs.addOrReplaceChild("arm_2", CubeListBuilder.create().texOffs(9, 233).addBox(-2.0F, 20.0F, -4.0F, 2.0F, 5.0F, 3.0F, new CubeDeformation(0.0F))
+				.texOffs(9, 233).addBox(-2.0F, 20.0F, 1.0F, 2.0F, 5.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(-18.0F, 17.0F, -35.0F));
 
 		PartDefinition cube_r1 = arm_2.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(57, 240).addBox(18.0F, 45.0F, -1.0F, 4.0F, 20.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(20.0F, -45.0F, 3.0F, 0.0F, 3.1416F, 0.0F));
 
@@ -136,15 +137,14 @@ public class ZhuchengtyrannusModel<T extends ZhuchengtyrannusEntity> extends Hie
 		return literallyeverything;
 	}
 
-	// Dentro de ZhuchengtyrannusModel.java
-
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 
 		this.animate(entity.idleAnimationState, ModAnimationDefition.idle, ageInTicks);
-		this.animate(entity.walkAnimationState, ModAnimationDefition.walk, ageInTicks, limbSwingAmount);
 		this.animate(entity.attackAnimationState, ModAnimationDefition.scream, ageInTicks);
+		this.animate(entity.swimAnimationState, ModAnimationDefition.swim, ageInTicks);
+		this.animate(entity.walkAnimationState, ModAnimationDefition.walk, ageInTicks, limbSwingAmount);
 		this.animate(entity.runAnimationState, ModAnimationDefition.run, ageInTicks, limbSwingAmount);
 
 		if (!entity.isRoaring()) {
