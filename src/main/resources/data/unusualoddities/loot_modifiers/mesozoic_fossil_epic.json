@@ -1,0 +1,12 @@
+{
+  "type": "unusual_prehistory:add_loot_table",
+  "replace": true,
+  "replaceChance": 0.1,
+  "conditions": [
+    {
+      "condition": "forge:loot_table_id",
+      "loot_table_id": "unusual_prehistory:archaeology/mesozoic_fossil_epic"
+    }
+  ],
+  "lootTable": "unusualoddities:archaeology/unod_fossils_epic"
+}
