@@ -1,23 +1,31 @@
 package net.barnacle.unusualoddities.entity.custom;
 
 import net.barnacle.unusualoddities.entity.UNODEntities;
+import net.barnacle.unusualoddities.entity.ai.RunGoal;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.MoveControl;
+import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +34,8 @@ import java.util.EnumSet;
 
 public class ZhuchengtyrannusEntity extends Animal {
     private static final EntityDataAccessor<Boolean> IS_ROARING = SynchedEntityData.defineId(ZhuchengtyrannusEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> IS_RUNNING = SynchedEntityData.defineId(ZhuchengtyrannusEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_RUNNING =
+            SynchedEntityData.defineId(ZhuchengtyrannusEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final EntityDataAccessor<Integer> DATA_VARIANT_ID =
             SynchedEntityData.defineId(ZhuchengtyrannusEntity.class, EntityDataSerializers.INT);
@@ -35,7 +44,6 @@ public class ZhuchengtyrannusEntity extends Animal {
     public final AnimationState walkAnimationState = new AnimationState();
     public final AnimationState attackAnimationState = new AnimationState();
     public final AnimationState runAnimationState = new AnimationState();
-    public final AnimationState swimAnimationState = new AnimationState();
 
     public int roarCooldown = 0;
 
@@ -43,24 +51,96 @@ public class ZhuchengtyrannusEntity extends Animal {
         super(pEntityType, pLevel);
     }
 
+    private static final EntityDataAccessor<Boolean> IS_PASSIVE = SynchedEntityData.defineId(ZhuchengtyrannusEntity.class, EntityDataSerializers.BOOLEAN);
+
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack itemstack = player.getItemInHand(hand);
+        if (itemstack.is(Items.GOLDEN_APPLE)) {
+            if (!player.getAbilities().instabuild) {
+                itemstack.shrink(1);
+            }
+            this.entityData.set(IS_PASSIVE, true);
+            this.setTarget(null);
+            this.level().broadcastEntityEvent(this, (byte)7);
+            return InteractionResult.sidedSuccess(this.level().isClientSide());
+        }
+        return super.mobInteract(player, hand);
+    }
+
+    public void setPassive(boolean passive) {
+        this.entityData.set(IS_PASSIVE, passive);
+
+        if (passive) {
+            this.setTarget(null);
+        }
+    }
+
+    public boolean isPassive() {
+        return this.entityData.get(IS_PASSIVE);
+    }
+
+    private void setupAnimationStates() {
+
+        double speed = this.getDeltaMovement().horizontalDistance();
+
+        if (this.isRoaring()) {
+            this.attackAnimationState.startIfStopped(this.tickCount);
+        } else {
+            this.attackAnimationState.stop();
+        }
+
+        if (this.isRunning() && speed > 0.2D) {
+
+            this.walkAnimationState.stop();
+            this.idleAnimationState.stop();
+
+            this.runAnimationState.startIfStopped(this.tickCount);
+            return;
+        }
+
+        if (speed > 0.05D) {
+
+            this.runAnimationState.stop();
+            this.idleAnimationState.stop();
+
+            this.walkAnimationState.startIfStopped(this.tickCount);
+            return;
+        }
+
+        this.walkAnimationState.stop();
+        this.runAnimationState.stop();
+        this.idleAnimationState.startIfStopped(this.tickCount);
+    }
+
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
+        this.entityData.define(IS_PASSIVE, false);
         this.entityData.define(DATA_VARIANT_ID, 0);
         this.entityData.define(IS_ROARING, false);
         this.entityData.define(IS_RUNNING, false);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("Variant", this.getVariant());
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+
+        tag.putInt("Variant", this.getVariant());
+        tag.putBoolean("IsPassive", this.isPassive());
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.setVariant(compound.getInt("Variant"));
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+
+        if (tag.contains("Variant")) {
+            this.setVariant(tag.getInt("Variant"));
+        }
+
+        if (tag.contains("IsPassive")) {
+            this.entityData.set(IS_PASSIVE, tag.getBoolean("IsPassive"));
+        }
     }
 
     public int getVariant() { return this.entityData.get(DATA_VARIANT_ID); }
@@ -75,6 +155,7 @@ public class ZhuchengtyrannusEntity extends Animal {
     @Override
     public void tick() {
         super.tick();
+
         if (this.level().isClientSide()) {
             setupAnimationStates();
         }
@@ -88,64 +169,34 @@ public class ZhuchengtyrannusEntity extends Animal {
         if (this.roarCooldown > 0) {
             this.roarCooldown--;
         }
+
     }
 
-    private void setupAnimationStates() {
-
-        double horizontalSpeed = this.getDeltaMovement().horizontalDistance();
-        boolean isMoving = horizontalSpeed > 0.01D;
-        boolean inWater = this.isInWater();
-
-        if (inWater) {
-
-            this.idleAnimationState.stop();
-            this.walkAnimationState.stop();
-            this.runAnimationState.stop();
-
-            this.swimAnimationState.startIfStopped(this.tickCount);
-        }
-
-        else if (isMoving) {
-            this.swimAnimationState.stop();
-            this.idleAnimationState.stop();
-
-            if (horizontalSpeed > 0.15D || this.isSprinting()) {
-                this.walkAnimationState.stop();
-                this.runAnimationState.startIfStopped(this.tickCount);
-            } else {
-                this.runAnimationState.stop();
-                this.walkAnimationState.startIfStopped(this.tickCount);
-            }
-        }
-
-        else {
-            this.swimAnimationState.stop();
-            this.walkAnimationState.stop();
-            this.runAnimationState.stop();
-
-            this.idleAnimationState.startIfStopped(this.tickCount);
-        }
-
-        if (this.isRoaring()) {
-            this.attackAnimationState.startIfStopped(this.tickCount);
-        } else {
-            this.attackAnimationState.stop();
-        }
+    @Override
+    public boolean canBreatheUnderwater() {
+        return true;
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new RoarGoal(this));
-        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.05D, false));
+        this.goalSelector.addGoal(2,
+                new MeleeAttackGoal(this, 1.2D, true));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
 
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true) {
-            @Override public boolean canUse() { return !ZhuchengtyrannusEntity.this.isBaby() && super.canUse(); }
-        });
+        this.targetSelector.addGoal(1,
+                new NearestAttackableTargetGoal<>(this, Player.class, true) {
+                    @Override
+                    public boolean canUse() {
+                        return !ZhuchengtyrannusEntity.this.isPassive() && super.canUse();
+                    }
+                });
+
+        this.goalSelector.addGoal(2, new RunGoal(this));
     }
 
     @Override
@@ -196,13 +247,15 @@ public class ZhuchengtyrannusEntity extends Animal {
         @Override
         public void stop() {
             mob.setRoaring(false);
-            mob.roarCooldown = 100;
         }
 
         @Override
         public void tick() {
+            mob.setRoaring(true);
 
-            this.roarTime--;
+            if (mob.tickCount % 20 == 0) {
+                mob.level().broadcastEntityEvent(mob, (byte) 10);
+            }
         }
 
         @Override

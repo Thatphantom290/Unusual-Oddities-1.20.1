@@ -60,7 +60,7 @@ public class ZhuchengtyrannusModel<T extends ZhuchengtyrannusEntity> extends Hie
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition literallyeverything = partdefinition.addOrReplaceChild("literallyeverything", CubeListBuilder.create(), PartPose.offset(0.0F, -35.0F, 18.0F));
+		PartDefinition literallyeverything = partdefinition.addOrReplaceChild("literallyeverything", CubeListBuilder.create(), PartPose.offset(0.0F, -35.0F, -14.0F));
 
 		PartDefinition everything_except_legs = literallyeverything.addOrReplaceChild("everything_except_legs", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
@@ -141,11 +141,10 @@ public class ZhuchengtyrannusModel<T extends ZhuchengtyrannusEntity> extends Hie
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 
-		this.animate(entity.idleAnimationState, ModAnimationDefition.idle, ageInTicks);
-		this.animate(entity.attackAnimationState, ModAnimationDefition.scream, ageInTicks);
-		this.animate(entity.swimAnimationState, ModAnimationDefition.swim, ageInTicks);
 		this.animate(entity.walkAnimationState, ModAnimationDefition.walk, ageInTicks, limbSwingAmount);
 		this.animate(entity.runAnimationState, ModAnimationDefition.run, ageInTicks, limbSwingAmount);
+		this.animate(entity.idleAnimationState, ModAnimationDefition.idle, ageInTicks);
+		this.animate(entity.attackAnimationState, ModAnimationDefition.scream, ageInTicks, 1.0f);
 
 		if (!entity.isRoaring()) {
 			float totalYRot = netHeadYaw * ((float)Math.PI / 180F);
