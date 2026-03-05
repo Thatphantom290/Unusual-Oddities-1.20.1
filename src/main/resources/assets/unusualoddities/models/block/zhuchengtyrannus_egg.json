@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "unusualoddities:block/zhuchengtyrannus_egg_top",
+    "side": "unusualoddities:block/zhuchengtyrannus_egg_side"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "hatch=0": { "model": "unusualoddities:block/zhuchengtyrannus_egg" },
+    "hatch=1": { "model": "unusualoddities:block/zhuchengtyrannus_egg_half_cracked" },
+    "hatch=2": { "model": "unusualoddities:block/zhuchengtyrannus_egg_cracked" }
+  }
+}

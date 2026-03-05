@@ -1,7 +1,6 @@
 package net.barnacle.unusualoddities.entity;
 
 import net.barnacle.unusualoddities.UnusualOddities;
-import net.barnacle.unusualoddities.entity.custom.ZhuchengtyrannusEggEntity;
 import net.barnacle.unusualoddities.entity.custom.ZhuchengtyrannusEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -18,11 +17,6 @@ public class UNODEntities {
             ENTITIES.register("zhuchengtyrannus", () -> EntityType.Builder.of(ZhuchengtyrannusEntity::new, MobCategory.CREATURE)
                     .sized(2.0f, 4.5f)
                     .build("zhuchengtyrannus"));
-
-    public static final RegistryObject<EntityType<ZhuchengtyrannusEggEntity>> ZHUCHENG_EGG_PROJECTILE =
-            ENTITIES.register("zhucheng_egg_projectile",
-                    () -> EntityType.Builder.<ZhuchengtyrannusEggEntity>of(ZhuchengtyrannusEggEntity::new, MobCategory.MISC)
-                            .sized(0.25F, 0.25F).build("zhucheng_egg_projectile"));
 
     public static void register(IEventBus eventBus) {
         ENTITIES.register(eventBus);

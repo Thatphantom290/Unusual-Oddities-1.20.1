@@ -12,15 +12,15 @@ public class ZhuchengtyrannusRenderer extends MobRenderer<ZhuchengtyrannusEntity
 
         super(context, new ZhuchengtyrannusModel<>(context.bakeLayer(ModModelLayers.ZHUCHENG_LAYER)), 2.5f);
     }
+    private static final ResourceLocation GREEN = new ResourceLocation(UnusualOddities.MOD_ID, "textures/entity/zhuchengtyrannus_green.png");
     private static final ResourceLocation NEON = new ResourceLocation(UnusualOddities.MOD_ID, "textures/entity/zhuchengtyrannus.png");
-    private static final ResourceLocation YING = new ResourceLocation(UnusualOddities.MOD_ID, "textures/entity/zhuchengtyrannus_ying.png");
     private static final ResourceLocation DEFAULT = new ResourceLocation(UnusualOddities.MOD_ID, "textures/entity/zhuchengtyrannus_neon.png");
 
     @Override
     public ResourceLocation getTextureLocation(ZhuchengtyrannusEntity entity) {
         return switch (entity.getVariant()) {
             case 1 -> NEON;
-            case 2 -> YING;
+            case 2 -> GREEN;
             default -> DEFAULT;
         };
     }

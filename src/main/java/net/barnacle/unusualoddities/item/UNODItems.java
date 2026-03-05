@@ -1,7 +1,8 @@
 package net.barnacle.unusualoddities.item;
 
 import net.barnacle.unusualoddities.UnusualOddities;
-import net.barnacle.unusualoddities.item.custom.ZhuchengtyrannusEggItem;
+import net.barnacle.unusualoddities.block.UNODBlocks;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -17,9 +18,6 @@ public class UNODItems {
 
     public static final RegistryObject<Item> TYRANNISED_FOSSIL = ITEMS.register("tyrannised_fossil",
             () -> new Item(new Item.Properties()));
-
-    public static final RegistryObject<Item> ZHUCHENGTYRANNUS_EGG = ITEMS.register("zhuchengtyrannus_egg",
-            () -> new ZhuchengtyrannusEggItem(new Item.Properties()));
 
     public static final RegistryObject<Item> ZHUCHENGTYRANNUS_SPAWN_EGG =
             ITEMS.register("zhuchengtyrannus_spawn_egg", () -> new ForgeSpawnEggItem(ZHUCHENGTYRANNUS, 0x5C4033, 0x8B0000, new Item.Properties()));

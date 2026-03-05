@@ -1,6 +1,7 @@
 package net.barnacle.unusualoddities;
 
 import com.mojang.logging.LogUtils;
+import net.barnacle.unusualoddities.block.UNODBlocks;
 import net.barnacle.unusualoddities.entity.UNODEntities;
 import net.barnacle.unusualoddities.entity.client.ModModelLayers;
 import net.barnacle.unusualoddities.entity.client.ZhuchengtyrannusModel;
@@ -34,9 +35,10 @@ public class UnusualOddities
     {
         IEventBus modEventBus = context.getModEventBus();
 
-        UNODCreativeModeTabs.register(modEventBus);
+        UNODBlocks.register(modEventBus);
         UNODItems.register(modEventBus);
         UNODEntities.register(modEventBus);
+        UNODCreativeModeTabs.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
@@ -76,8 +78,7 @@ public class UnusualOddities
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
 
-            event.registerEntityRenderer(UNODEntities.ZHUCHENG_EGG_PROJECTILE.get(), ThrownItemRenderer::new);
-            event.registerEntityRenderer(UNODEntities.ZHUCHENGTYRANNUS.get(), ZhuchengtyrannusRenderer::new);
+           event.registerEntityRenderer(UNODEntities.ZHUCHENGTYRANNUS.get(), ZhuchengtyrannusRenderer::new);
         }
 
         @SubscribeEvent

@@ -1,6 +1,7 @@
 package net.barnacle.unusualoddities.item;
 
 import net.barnacle.unusualoddities.UnusualOddities;
+import net.barnacle.unusualoddities.block.UNODBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -18,7 +19,7 @@ public class UNODCreativeModeTabs {
                     .title(Component.translatable("creativetab.unusual_oddities_tab"))
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(UNODItems.TYRANNISED_FOSSIL.get());
-                        output.accept(UNODItems.ZHUCHENGTYRANNUS_EGG.get());
+                        output.accept(UNODBlocks.ZHUCHENGTYRANNUS_EGG.get());
                         output.accept(UNODItems.ZHUCHENGTYRANNUS_SPAWN_EGG.get());
                     })
                     .build());
